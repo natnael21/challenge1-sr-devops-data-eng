@@ -27,8 +27,11 @@ pipeline {
     stage('Install') {
       steps {
         dir('etl-python-project') {
-          sh 'python -m pip install poetry --break-system-packages'
-          sh 'poetry install --no-interaction'
+          sh '''
+            python -m pip install poetry --break-system-packages
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry install --no-interaction
+          '''
         }
       }
     }
@@ -36,7 +39,10 @@ pipeline {
     stage('Test') {
       steps {
         dir('etl-python-project') {
-          sh 'poetry run pytest -q'
+          sh '''
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry run pytest -q
+          '''
         }
       }
     }
@@ -44,8 +50,11 @@ pipeline {
     stage('Build') {
       steps {
         dir('etl-python-project') {
-          sh 'poetry build'
-          sh 'poetry run python etl_job.py'
+          sh '''
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry build
+            poetry run python etl_job.py
+          '''
         }
       }
     }
