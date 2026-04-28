@@ -27,10 +27,14 @@ pipeline {
     stage('Install') {
       steps {
         dir('etl-python-project') {
+          // Avoid system-wide pip installs (PEP 668). Install Poetry into a venv.
           sh '''
-            python -m pip install poetry --break-system-packages
-            export PATH="$HOME/.local/bin:$PATH"
-            poetry install --no-interaction
+            set -e
+            python3 -m venv .venv
+            . .venv/bin/activate
+            python -m pip install -U pip
+            python -m pip install poetry
+            .venv/bin/poetry install --no-interaction
           '''
         }
       }
@@ -39,10 +43,7 @@ pipeline {
     stage('Test') {
       steps {
         dir('etl-python-project') {
-          sh '''
-            export PATH="$HOME/.local/bin:$PATH"
-            poetry run pytest -q
-          '''
+          sh '.venv/bin/poetry run pytest -q'
         }
       }
     }
@@ -50,11 +51,8 @@ pipeline {
     stage('Build') {
       steps {
         dir('etl-python-project') {
-          sh '''
-            export PATH="$HOME/.local/bin:$PATH"
-            poetry build
-            poetry run python etl_job.py
-          '''
+          sh '.venv/bin/poetry build'
+          sh '.venv/bin/poetry run python etl_job.py'
         }
       }
     }
