@@ -27,7 +27,7 @@ pipeline {
     stage('Install') {
       steps {
         dir('etl-python-project') {
-          sh 'python -m pip install poetry'
+          sh 'python -m pip install poetry --break-system-packages'
           sh 'poetry install --no-interaction'
         }
       }
