@@ -11,7 +11,8 @@ pipeline {
     AWS_ACCESS_KEY_ID = 'test'
     AWS_SECRET_ACCESS_KEY = 'test'
     AWS_DEFAULT_REGION = 'us-east-1'
-    AWS_ENDPOINT_URL = 'http://localhost:4566'
+    // From inside Jenkins container, reach LocalStack via compose service DNS.
+    AWS_ENDPOINT_URL = 'http://localstack:4566'
     S3_BUCKET = 'etl-output-bucket'
     DYNAMODB_TABLE = 'etl-job-metadata'
     ETL_ROLE_ARN = 'arn:aws:iam::000000000000:role/etl-lambda-role'
@@ -68,6 +69,17 @@ pipeline {
           sh '''
             set -eux
             export PATH="$HOME/.local/bin:$PATH"
+            echo "=== DEBUG: LocalStack reachability ==="
+            python3 - <<'PY'
+import os, urllib.request
+url = os.environ.get("AWS_ENDPOINT_URL", "").rstrip("/") + "/_localstack/health"
+print("health_url=", url)
+try:
+    print(urllib.request.urlopen(url, timeout=5).read().decode("utf-8")[:400])
+except Exception as e:
+    print("health_check_failed:", repr(e))
+    raise
+PY
             poetry run python etl_job.py
           '''
         }
