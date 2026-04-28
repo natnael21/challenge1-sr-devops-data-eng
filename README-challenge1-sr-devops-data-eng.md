@@ -17,7 +17,7 @@ This repository now contains a complete local DevOps/Data Engineering sandbox im
   - Gitea
   - PostgreSQL
   - Prometheus
-  - Grafana
+  - Grafana 
 - `terraform-infra/` provisions:
   - S3 bucket (`etl-output-bucket`)
   - DynamoDB table (`etl-job-metadata`)
