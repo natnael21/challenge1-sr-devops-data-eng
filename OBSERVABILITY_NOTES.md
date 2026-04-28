@@ -44,3 +44,4 @@ docker compose up -d
 - Docker containers running (`docker compose ps`)
 - Prometheus targets page showing `UP`
 - Grafana dashboard panel with time-series metrics
+ 
