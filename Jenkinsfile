@@ -27,14 +27,24 @@ pipeline {
     stage('Install') {
       steps {
         dir('etl-python-project') {
-          // Avoid system-wide pip installs (PEP 668). Install Poetry into a venv.
+          // Jenkins image Python may not include venv/ensurepip. Use user-space Poetry install instead.
           sh '''
-            set -e
-            python3 -m venv .venv
-            . .venv/bin/activate
-            python -m pip install -U pip
-            python -m pip install poetry
-            .venv/bin/poetry install --no-interaction
+            set -eux
+            echo "=== DEBUG: runtime ==="
+            id || true
+            uname -a || true
+            echo "pwd=$(pwd)"
+            ls -la
+            echo "=== DEBUG: python/pip ==="
+            command -v python3 || true
+            python3 --version || true
+            python3 -m pip --version || true
+            echo "=== Install Poetry (user) ==="
+            python3 -m pip install --user --upgrade pip
+            python3 -m pip install --user --break-system-packages poetry
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry --version
+            poetry install --no-interaction
           '''
         }
       }
@@ -43,7 +53,11 @@ pipeline {
     stage('Test') {
       steps {
         dir('etl-python-project') {
-          sh '.venv/bin/poetry run pytest -q'
+          sh '''
+            set -eux
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry run pytest -q
+          '''
         }
       }
     }
@@ -51,8 +65,12 @@ pipeline {
     stage('Build') {
       steps {
         dir('etl-python-project') {
-          sh '.venv/bin/poetry build'
-          sh '.venv/bin/poetry run python etl_job.py'
+          sh '''
+            set -eux
+            export PATH="$HOME/.local/bin:$PATH"
+            poetry build
+            poetry run python etl_job.py
+          '''
         }
       }
     }
