@@ -40,7 +40,7 @@ pipeline {
             python3 --version || true
             python3 -m pip --version || true
             echo "=== Install Poetry (user) ==="
-            python3 -m pip install --user --upgrade pip
+            # Don't attempt to upgrade pip in externally-managed env (PEP 668).
             python3 -m pip install --user --break-system-packages poetry
             export PATH="$HOME/.local/bin:$PATH"
             poetry --version
