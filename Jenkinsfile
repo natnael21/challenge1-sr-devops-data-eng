@@ -68,7 +68,6 @@ pipeline {
           sh '''
             set -eux
             export PATH="$HOME/.local/bin:$PATH"
-            poetry build
             poetry run python etl_job.py
           '''
         }
