@@ -1,3 +1,26 @@
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.python-version
+
+# Local data outputs
+etl-python-project/data/output.csv
+
+# Terraform local artifacts (do not ship state)
+terraform-infra/.terraform/
+terraform-infra/terraform.tfstate
+terraform-infra/terraform.tfstate.*
+terraform-infra/.terraform.lock.hcl
+terraform-infra/build/
+
+# OS / editor
+Thumbs.db
+.vscode/
+.idea/
 # Terraform
 .terraform/
 *.tfstate

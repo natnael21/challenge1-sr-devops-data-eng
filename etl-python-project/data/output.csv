@@ -1,4 +1,0 @@
-customer_id,amount,region,processed,processed_at
-1001,125.5,us-east,True,2026-04-28T03:49:22.877725+00:00
-1002,99.99,us-west,True,2026-04-28T03:49:22.877725+00:00
-1003,42.1,us-east,True,2026-04-28T03:49:22.877725+00:00

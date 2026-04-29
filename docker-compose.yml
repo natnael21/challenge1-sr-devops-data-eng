@@ -17,7 +17,9 @@ services:
       retries: 10
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: jenkins/Dockerfile
     ports:
       - "8080:8080"
     volumes:
@@ -58,7 +60,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
-
+  
 volumes:
   jenkins_home:
   gitea:
